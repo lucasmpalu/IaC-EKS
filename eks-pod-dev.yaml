@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-nginx-pod
+  labels:
+    app: nginx-dev
+    env: dev
+spec:
+  nodeSelector: # Con esto especifico que el pod se ejecute en nodos con la etiqueta env=dev
+      env: dev
+  containers:
+    - name: nginx-container-dev
+      image: nginx:alpine
+      ports:
+        - containerPort: 80

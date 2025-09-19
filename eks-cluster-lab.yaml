@@ -1,0 +1,59 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-cluster-lab
+  region: us-east-1
+  version: "1.29"
+
+vpc:
+  clusterEndpoints:
+    publicAccess: true
+    privateAccess: true
+
+iam:
+  withOIDC: true
+
+managedNodeGroups:
+  - name: prod-ng
+    instanceTypes: ["t3.small"]
+    desiredCapacity: 1
+    minSize: 1
+    maxSize: 2
+    spot: false   # nodos prod siempre on-demand
+    volumeSize: 20
+    volumeType: gp3
+    labels:
+      env: prod
+      nodegroup-type: production
+    ssh:
+      allow: false
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+
+  - name: dev-ng
+    instanceTypes: ["t3.micro"]
+    desiredCapacity: 1
+    minSize: 1
+    maxSize: 2
+    spot: true        # nodos dev en spot
+    volumeSize: 20
+    volumeType: gp3
+    labels:
+      env: dev
+      nodegroup-type: development
+    ssh:
+      allow: false
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+
+addons:
+  - name: vpc-cni
+  - name: coredns
+  - name: kube-proxy

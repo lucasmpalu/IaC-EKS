@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-prod-deployment
+  labels:
+    app: nginx-prod
+spec:
+  replicas: 3 # Define 3 instâncias da aplicação
+  selector:
+    matchLabels:
+      app: nginx-prod
+  template:
+    metadata:
+      labels:
+        app: nginx-prod
+        env: prod
+    spec:
+      nodeSelector:
+        env: prod # Con esto especifico que el pod se ejecute en nodos con la etiqueta env=prod
+      containers:
+      - name: nginx-container-prod
+        image: mi-nginx-custom:v2
+        ports:
+        - containerPort: 80
